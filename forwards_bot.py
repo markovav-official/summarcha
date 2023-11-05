@@ -5,7 +5,8 @@ from pyrogram.types import Message
 from dotenv import load_dotenv
 from typing import List
 from pyrogram.enums import ChatAction
-import huggingface_api
+import summarization_api
+import translation_api
 
 # Load environment variables from .env file
 load_dotenv()
@@ -16,6 +17,15 @@ api_hash = os.getenv("API_HASH")
 
 # Create a Pyrogram client instance
 app = Client("my_bot", api_id, api_hash)
+
+
+class ProgressMessage:
+    def __init__(self, message: Message):
+        self.message = message
+
+    async def update(self, text: str):
+        await self.message.edit(text)
+
 
 @app.on_message(filters.command("summarize"))
 async def summarize_command_handler(client: Client, message: Message):
@@ -40,8 +50,8 @@ async def summarize_command_handler(client: Client, message: Message):
     if len(analyzed_messages) == 0:
         await message.reply("No forwarded messages found")
         return
-    response = await proccess_messages(analyzed_messages)
-    await message.reply(response)
+    message = await client.send_message(message.chat.id, "Analyzing messages...")
+    await proccess_messages(analyzed_messages, ProgressMessage(message))
 
 def get_user_name(message: Message):
     if message.forward_signature:
@@ -52,7 +62,7 @@ def get_user_name(message: Message):
         return message.forward_from.first_name + ((" " + message.forward_from.last_name) if message.forward_from.last_name else "")
     return 'Anonymous'
 
-def transform_to_model_input(messages: List[Message]):
+async def transform_to_model_input(messages: List[Message], progress_message: ProgressMessage):
     unique_users = set(map(get_user_name, messages))
 
     fake = faker.Faker()
@@ -62,14 +72,22 @@ def transform_to_model_input(messages: List[Message]):
 
     lines = [to_fake[get_user_name(m)] + ": " + m.text for m in messages]
     print("Number of input messages:", len(lines))
+    await progress_message.update("Preparing messages... (0/" + str(len(lines)) + ")")
+
+    for i in range(len(lines)):
+        lines[i] = lines[i].replace('\n', ' ')
+        if any(['а' <= c <= 'я' for c in lines[i].lower()]):
+            lines[i] = await translation_api.query_wrapper(lines[i], "ru_RU", "en_XX")
+        await progress_message.update("Preparing messages... (" + str(i + 1) + "/" + str(len(lines)) + ")")
 
     return from_fake, '\n'.join(lines)
 
-async def proccess_messages(analyzed_messages: List[Message]):
-    fake_dict, model_input = transform_to_model_input(analyzed_messages)
-    model_output = await huggingface_api.query_wrapper(model_input)
+async def proccess_messages(analyzed_messages: List[Message], progress_message: ProgressMessage):
+    fake_dict, model_input = await transform_to_model_input(analyzed_messages, progress_message)
+    await progress_message.update("Summarizing...")
+    model_output = await summarization_api.query_wrapper(model_input)
     for fake_name, real_name in fake_dict.items():
         model_output = model_output.replace(fake_name, real_name)
-    return model_output
+    await progress_message.update(model_output)
 
 app.run()

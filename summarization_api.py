@@ -19,15 +19,16 @@ async def query(payload):
 async def query_wrapper(text):
     answer = await query({"inputs": text})
     print("HuggingFace API:", answer)
+    if 'error' in answer and 'estimated_time' in answer:
+        await asyncio.sleep(answer['estimated_time'] / 10)
+        return await query_wrapper(text)
     return answer[0]["summary_text"]
 
 
 if __name__ == "__main__":
     output = asyncio.run(
-        query(
-            {
-                "inputs": """"""
-            }
+        query_wrapper(
+            """The US has "passed the peak" on new coronavirus cases, President Donald Trump said and predicted that some states would reopen this month."""
         )
     )
 
