@@ -1,4 +1,5 @@
 from app.schemas import Message
+from ml.T5_summarizer import summarize
 from collections import Counter
 
 
@@ -28,8 +29,19 @@ def truncate_each(
     ]
 
 
-def summarize(messages: list[Message]) -> str:
-    return "\n".join(message.text for message in messages)
+def summarize_messages(messages: list[Message]) -> str:
+    grouped_messages = []
+    for message in messages:
+        if len(grouped_messages) > 0 and grouped_messages[-1].user_id == message.user_id:
+            grouped_messages[-1].text += "\n" + message.text
+        else:
+            grouped_messages.append(message)
+
+
+    text = "\n".join(message.username + message.text for message in grouped_messages)
+    summarized = summarize(text)
+
+    return summarized
 
 
 def process_messages(
@@ -37,7 +49,7 @@ def process_messages(
 ) -> str:
     messages, bot_commands = extract_bot_commands(messages)
     messages = truncate_each(messages)
-    res = summarize(messages)
+    res = summarize_messages(messages)
 
     if include_command_stats and bot_commands:
         res += "\n\nCommand stats:\n" + "\n".join(

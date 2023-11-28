@@ -42,30 +42,37 @@ Our team's final solution was the development of a custom Telegram client featur
 
 ## Project timeline
 
-Week 1-2: Initial research and selection of models (BART, T5). Development and testing of Solution 1.
-Week 3-4: Integration of Telegram Translation API and testing of Solution 2.
-Week 5-6: Finetuning ru-T5 model and testing of Solution 3.
-Week 7-8: Choosing the best solution, modifiying Telegram Web client.
+* **Week 1-2**: Initial research and selection of models (BART, T5). Development and testing of Solution 1.
+* **Week 3-4**: Integration of Telegram Translation API and testing of Solution 2.
+* **Week 5-6**: fine-tuning ru-T5 model and testing of Solution 3.
+* **Week 7-8**: Choosing the best solution, modifying Telegram Web client.
 
 ## Developers
 
 ### Team
 
-| Full name     | Innopolis Email                 | Github                                                     | Responsibilities                 |
-| ------------- | ------------------------------- | ---------------------------------------------------------- | -------------------------------- |
-| Andrei Markov | <a.markov@innopolis.university> | [@markovav-official](https://github.com/markovav-official) | Frontend, Dataset creation       |
-| Grigorii Fil  | <g.fil@innopolis.university>    | [@Fil-126](https://github.com/Fil-126)                     | Model finetuning, EDA            |
-| Timofey Sedov | <t.sedov@innopolis.university>  | [@moflotas](https://github.com/moflotas)                   | Backend, Research, Model testing |
+| Full name     | Innopolis Email                                                    | Github                                                  | Responsibilities                 |
+| ------------- | ------------------------------------------------------------------ | ------------------------------------------------------- | -------------------------------- |
+| Andrei Markov | [a.markov@innopolis.university](mailto:a.markov@innopolis.university) | [@markovav-official](https://github.com/markovav-official) | Frontend, Dataset creation       |
+| Grigorii Fil  | [g.fil@innopolis.university](mailto:g.fil@innopolis.university)       | [@Fil-126](https://github.com/Fil-126)                     | Model fine-tuning, EDA           |
+| Timofey Sedov | [t.sedov@innopolis.university](mailto:t.sedov@innopolis.university)   | [@moflotas](https://github.com/moflotas)                   | Backend, Research, Model testing |
 
 ### Contributions
 
-Andrei was mainly responsible for the frontend part of the project. He created modified Telegram web client which allows to send messages to the backend and receive the summary. He also created a dataset for the model finetuning.
+**Andrei** was mainly responsible for the frontend part of the project. He created a modified Telegram web client which allows users to send messages to the backend and receive the summary. He also created a dataset for the model fine-tuning.
 
-Grigorii was responsible for the model finetuning. He performed EDA on the dataset and finetuned the model on the dataset.
+**Grigorii** was responsible for the model fine-tuning. He performed EDA on the dataset and finetuned the model on the dataset.
 
-Timofey was responsible for the backend part of the project. He created a Telegram bot which receives messages from the frontend and sends them to the model. He also performed research on the model and tested it.
+**Timofey** was responsible for the backend part of the project. He created a backend which receives messages from the frontend and sends them to the model. He also performed research on the model and tested it.
+
+## Model weights and Demo
+
+[Model Weights](https://drive.markovav.ru/api/v1/files/144cb3a7-7de7-41f3-a7ee-2c028945313b?raw=1&password=null)
+
+[Demo](https://youtu.be/PhqPpuqfKOI)
 
 ## References
 
 - [T5](https://arxiv.org/abs/1910.10683)
-- [Dataset](#TODO)
+- [Dataset](https://huggingface.co/datasets/d0rj/dialogsum-ru)
+- [Bart](https://arxiv.org/abs/1910.13461)
