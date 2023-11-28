@@ -1,6 +1,4 @@
 __pycache__/
-.env
 .vs-code/
 *.session
 *.session-journal
-datasets/
